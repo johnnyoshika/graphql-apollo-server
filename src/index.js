@@ -18,11 +18,25 @@ let users = {
   }
 };
 
+let messages = {
+  1: {
+    id: '1',
+    text: 'Hello World',
+  },
+  2: {
+    id: '2',
+    text: 'By World',
+  },
+};
+
 const schema = gql`
   type Query {
     me: User
     user(id: ID!): User
     users: [User!]!
+
+    message(id: ID!): Message!
+    messages: [Message!]!
   }
 
   type User {
@@ -33,13 +47,20 @@ const schema = gql`
     lastName: String
     age: Int
   }
+
+  type Message {
+    id: ID!
+    text: String!
+  }
 `;
 
 const resolvers = {
   Query: {
     me: (parent, args, { me }) => me,
     user: (parent, { id }) => users[id],
-    users: () => Object.values(users)
+    users: () => Object.values(users),
+    message: (parent, { id }) => messages[id],
+    messages: () => Object.values(messages)
   },
 
   User: {
