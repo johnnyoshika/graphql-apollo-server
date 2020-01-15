@@ -50,6 +50,7 @@ const schema = gql`
     firstName: String
     lastName: String
     age: Int
+    messages: [Message!]
   }
 
   type Message {
@@ -71,7 +72,10 @@ const resolvers = {
   },
 
   User: {
-    name: user => `${user.firstName} ${user.lastName}`
+    name: user => `${user.firstName} ${user.lastName}`,
+    messages: user => Object.values(messages).filter(
+      message => message.userId === user.id
+    )
   },
 
   Message: {
