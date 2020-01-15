@@ -29,6 +29,8 @@ let messages = {
   },
 };
 
+//#region Schema
+
 const schema = gql`
   type Query {
     me: User
@@ -53,6 +55,8 @@ const schema = gql`
     text: String!
   }
 `;
+
+//#endregion
 
 const resolvers = {
   Query: {
