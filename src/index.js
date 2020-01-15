@@ -30,6 +30,7 @@ const schema = gql`
   type User {
     id: ID!
     username: String!
+    name: String
     firstName: String
     lastName: String
     age: Int
@@ -41,6 +42,10 @@ const resolvers = {
     me: () => me,
     user: (parent, { id }) => users[id],
     users: () => Object.values(users)
+  },
+
+  User: {
+    name: user => `${user.firstName} ${user.lastName}`
   }
 };
 
