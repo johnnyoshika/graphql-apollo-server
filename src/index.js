@@ -22,11 +22,13 @@ let messages = {
   1: {
     id: '1',
     text: 'Hello World',
+    userId: '1'
   },
   2: {
     id: '2',
     text: 'By World',
-  },
+    userId: '2'
+  }
 };
 
 //#region Schema
@@ -53,6 +55,7 @@ const schema = gql`
   type Message {
     id: ID!
     text: String!
+    user: User!
   }
 `;
 
@@ -69,6 +72,10 @@ const resolvers = {
 
   User: {
     name: user => `${user.firstName} ${user.lastName}`
+  },
+
+  Message: {
+    user: message => users[message.userId]
   }
 };
 
