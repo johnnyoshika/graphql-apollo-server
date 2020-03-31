@@ -13,6 +13,11 @@ app.use(cors());
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
+  formatError: error => ({
+    // remove the internal 'Validation error: ' part and leave only the important message
+    ...error,
+    message: error.message.replace('Validation error: ', ''),
+  }),
   context: async () => ({
     models,
     me: await models.User.findByLogin('louferigno'),
