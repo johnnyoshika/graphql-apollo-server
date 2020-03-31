@@ -10,10 +10,7 @@ export default gql`
   type User {
     id: ID!
     username: String!
-    name: String
-    firstName: String
-    lastName: String
-    age: Int
+    email: String!
     messages: [Message!]
   }
 `;
