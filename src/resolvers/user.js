@@ -1,7 +1,7 @@
 export default {
   Query: {
     me: async (parent, args, { models, me }) =>
-      await models.User.findByPk(me.id),
+      me ? await models.User.findByPk(me.id) : null,
     user: async (parent, { id }, { models }) =>
       await models.User.findByPk(id),
     users: async (parent, args, { models }) =>
