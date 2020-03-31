@@ -1,3 +1,12 @@
+import jwt from 'jsonwebtoken';
+
+const createToken = async (user, secret, expiresIn) => {
+  const { id, email, username } = user;
+  return await jwt.sign({ id, email, username }, secret, {
+    expiresIn,
+  });
+};
+
 export default {
   Query: {
     me: async (parent, args, { models, me }) =>
