@@ -1,11 +1,25 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { ApolloServer } from 'apollo-server-express';
+import {
+  ApolloServer,
+  AuthenticationError,
+} from 'apollo-server-express';
+import jwt from 'jsonwebtoken';
 
 import schema from './schema';
 import resolvers from './resolvers';
 import models, { sequelize } from './models';
+
+const getMe = async req => {
+  const token = req.headers['x-token'];
+  if (!token) return undefined;
+  try {
+    return await jwt.verify(token, process.env.SECRET);
+  } catch (e) {
+    throw new AuthenticationError('Session expired.');
+  }
+};
 
 const app = express();
 app.use(cors());
@@ -18,9 +32,9 @@ const server = new ApolloServer({
     ...error,
     message: error.message.replace('Validation error: ', ''),
   }),
-  context: async () => ({
+  context: async ({ req }) => ({
     models,
-    me: await models.User.findByLogin('louferigno'),
+    me: await getMe(req),
     secret: process.env.SECRET,
   }),
 });
