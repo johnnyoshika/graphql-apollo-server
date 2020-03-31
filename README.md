@@ -1,8 +1,9 @@
 # GraphQL using Apollo Server and Express
 
-For this tutorial: https://www.robinwieruch.de/graphql-apollo-server-tutorial
+Exercises from this book: https://www.robinwieruch.de/the-road-to-graphql-book
+..and from this tutorial: https://www.robinwieruch.de/graphql-apollo-server-tutorial
 
-Started with Simple Node Application: https://github.com/rwieruch/minimal-node-application
+Started with Simple Node Application: https://github.com/johnnyoshika/minimal-node-application
 
 ## Setup
 * Use Node version 8+ (e.g. v8.17.0)
