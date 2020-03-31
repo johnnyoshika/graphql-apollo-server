@@ -13,11 +13,12 @@ app.use(cors());
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: {
+  context: async () => ({
     models,
-    // me: models.users[1],
-  },
+    me: await models.User.findByLogin('louferigno'),
+  }),
 });
+
 server.applyMiddleware({ app, path: '/graphql' });
 
 const eraseDatabaseOnSync = true;
