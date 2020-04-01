@@ -34,7 +34,7 @@ const server = new ApolloServer({
   }),
   context: async ({ req }) => ({
     models,
-    me: await getMe(req),
+    me: await getMe(req), // The context is generated  with every new request, so we don’t have to clean up. Source: https://www.apollographql.com/docs/apollo-server/security/authentication/
     secret: process.env.SECRET,
   }),
 });
