@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import { AuthenticationError, UserInputError } from 'apollo-server';
 
 const createToken = async (user, secret, expiresIn) => {
-  const { id, email, username } = user;
-  return await jwt.sign({ id, email, username }, secret, {
+  const { id, email, username, role } = user;
+  return await jwt.sign({ id, email, username, role }, secret, {
     expiresIn,
   });
 };

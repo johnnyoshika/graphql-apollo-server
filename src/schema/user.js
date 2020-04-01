@@ -25,6 +25,7 @@ export default gql`
     id: ID!
     username: String!
     email: String!
+    role: String
     messages: [Message!]
   }
 `;
