@@ -6,8 +6,8 @@ export default {
   Query: {
     message: async (parent, { id }, { models }) =>
       await models.Mesasge.findByPk(id),
-    messages: async (parent, { cursor, limit = 100 }, { models }) =>
-      await models.Message.findAll({
+    messages: async (parent, { cursor, limit = 100 }, { models }) => {
+      const messages = await models.Message.findAll({
         order: [['createdAt', 'DESC']],
         limit,
         where: cursor
@@ -17,7 +17,17 @@ export default {
               },
             }
           : null,
-      }),
+      });
+
+      return {
+        edges: messages,
+        pageInfo: {
+          endCursor: messages.length
+            ? messages[messages.length - 1].createdAt
+            : null,
+        },
+      };
+    },
   },
 
   Mutation: {
