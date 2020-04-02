@@ -3,7 +3,7 @@ import { gql } from 'apollo-server-express';
 export default gql`
   extend type Query {
     message(id: ID!): Message!
-    messages(offset: Int, limit: Int): [Message!]!
+    messages(cursor: String, limit: Int): [Message!]!
   }
 
   extend type Mutation {
