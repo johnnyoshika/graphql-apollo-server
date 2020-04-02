@@ -5,8 +5,15 @@ export default {
   Query: {
     message: async (parent, { id }, { models }) =>
       await models.Mesasge.findByPk(id),
-    messages: async (parent, args, { models }) =>
-      await models.Message.findAll(),
+    messages: async (
+      parent,
+      { offset = 0, limit = 100 },
+      { models },
+    ) =>
+      await models.Message.findAll({
+        offset,
+        limit,
+      }),
   },
 
   Mutation: {
