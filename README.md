@@ -6,7 +6,7 @@ Exercises from this book: https://www.robinwieruch.de/the-road-to-graphql-book
 Started with Simple Node Application: https://github.com/johnnyoshika/minimal-node-application
 
 ## Setup
-* Use Node version 8+ (e.g. v8.17.0)
+* Use Node version 12.X (e.g. v12.16.1)
 * `npm install`
 * Postgres
   * `docker pull postgres`
@@ -30,6 +30,7 @@ Started with Simple Node Application: https://github.com/johnnyoshika/minimal-no
   * `docker rm graphql` remove container
 
 ## Run
+* `docker start graphql`
 * `npm start`
 * Open http://localhost:8000/graphql
 
