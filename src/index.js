@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import http from 'http';
 import cors from 'cors';
 import {
   ApolloServer,
@@ -32,14 +33,24 @@ const server = new ApolloServer({
     ...error,
     message: error.message.replace('Validation error: ', ''),
   }),
-  context: async ({ req }) => ({
-    models,
-    me: await getMe(req), // The context is generated  with every new request, so we don’t have to clean up. Source: https://www.apollographql.com/docs/apollo-server/security/authentication/
-    secret: process.env.SECRET,
-  }),
+  context: async ({ req, connection }) => {
+    // subscription websocket request
+    if (connection) return { models };
+
+    // http request
+    if (req)
+      return {
+        models,
+        me: await getMe(req), // The context is generated  with every new request, so we don’t have to clean up. Source: https://www.apollographql.com/docs/apollo-server/security/authentication/
+        secret: process.env.SECRET,
+      };
+  },
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
+
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
 const eraseDatabaseOnSync = true;
 
@@ -50,7 +61,7 @@ sequelize
   .then(async () => {
     if (eraseDatabaseOnSync) createUsersWithMessages(new Date());
 
-    app.listen({ port: 8000 }, () => {
+    httpServer.listen({ port: 8000 }, () => {
       console.log('Apollo Server on http://localhost:8000/graphql');
     });
   });

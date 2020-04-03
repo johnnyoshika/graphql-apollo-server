@@ -12,6 +12,10 @@ export default gql`
     updateMessage(message: MessageUpdateInput!): Message
   }
 
+  extend type Subscription {
+    messageCreated: MessageCreated!
+  }
+
   type Message {
     id: ID!
     text: String!
@@ -27,6 +31,10 @@ export default gql`
   type MessageConnection {
     edges: [Message!]!
     pageInfo: PageInfo!
+  }
+
+  type MessageCreated {
+    message: Message!
   }
 
   input MessageUpdateInput {
