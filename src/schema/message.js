@@ -3,7 +3,7 @@ import { gql } from 'apollo-server-express';
 export default gql`
   extend type Query {
     message(id: ID!): Message!
-    messages: [Message!]!
+    messages(cursor: String, limit: Int): MessageConnection!
   }
 
   extend type Mutation {
@@ -17,6 +17,16 @@ export default gql`
     text: String!
     createdAt: Date!
     user: User!
+  }
+
+  type PageInfo {
+    hasNextPage: Boolean!
+    endCursor: String
+  }
+
+  type MessageConnection {
+    edges: [Message!]!
+    pageInfo: PageInfo!
   }
 
   input MessageUpdateInput {
