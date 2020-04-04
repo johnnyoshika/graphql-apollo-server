@@ -6,6 +6,7 @@ import {
   ApolloServer,
   AuthenticationError,
 } from 'apollo-server-express';
+import DataLoader from 'dataloader';
 import jwt from 'jsonwebtoken';
 
 import schema from './schema';
@@ -25,6 +26,16 @@ const getMe = async req => {
 const app = express();
 app.use(cors());
 
+const batchUsers = async (keys, models) => {
+  const users = await models.User.findAll({
+    where: {
+      id: keys,
+    },
+  });
+
+  return keys.map(key => users.find(user => user.id === key));
+};
+
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
@@ -43,6 +54,9 @@ const server = new ApolloServer({
         models,
         me: await getMe(req), // The context is generated  with every new request, so we don’t have to clean up. Source: https://www.apollographql.com/docs/apollo-server/security/authentication/
         secret: process.env.SECRET,
+        loaders: {
+          user: new DataLoader(keys => batchUsers(keys, models)),
+        },
       };
   },
 });
