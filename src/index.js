@@ -28,6 +28,8 @@ const app = express();
 app.use(cors());
 
 const server = new ApolloServer({
+  introspection: true, // enable for Heroku
+  playground: true, // enable in Heroku
   typeDefs: schema,
   resolvers,
   formatError: error => ({
