@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 import schema from './schema';
 import resolvers from './resolvers';
 import models, { sequelize } from './models';
+import loaders from './loaders';
 
 const getMe = async req => {
   const token = req.headers['x-token'];
@@ -25,16 +26,6 @@ const getMe = async req => {
 
 const app = express();
 app.use(cors());
-
-const batchUsers = async (keys, models) => {
-  const users = await models.User.findAll({
-    where: {
-      id: keys,
-    },
-  });
-
-  return keys.map(key => users.find(user => user.id === key));
-};
 
 const server = new ApolloServer({
   typeDefs: schema,
@@ -55,7 +46,9 @@ const server = new ApolloServer({
         me: await getMe(req), // The context is generated  with every new request, so we don’t have to clean up. Source: https://www.apollographql.com/docs/apollo-server/security/authentication/
         secret: process.env.SECRET,
         loaders: {
-          user: new DataLoader(keys => batchUsers(keys, models)),
+          user: new DataLoader(keys =>
+            loaders.user.batchUsers(keys, models),
+          ),
         },
       };
   },
