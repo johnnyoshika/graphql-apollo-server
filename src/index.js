@@ -37,7 +37,15 @@ const server = new ApolloServer({
   }),
   context: async ({ req, connection }) => {
     // subscription websocket request
-    if (connection) return { models };
+    if (connection)
+      return {
+        models,
+        loaders: {
+          user: new DataLoader(keys =>
+            loaders.user.batchUsers(keys, models),
+          ),
+        },
+      };
 
     // http request
     if (req)
