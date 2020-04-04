@@ -36,6 +36,8 @@ const batchUsers = async (keys, models) => {
   return keys.map(key => users.find(user => user.id === key));
 };
 
+const userLoader = new DataLoader(keys => batchUsers(keys, models));
+
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
@@ -55,7 +57,7 @@ const server = new ApolloServer({
         me: await getMe(req), // The context is generated  with every new request, so we don’t have to clean up. Source: https://www.apollographql.com/docs/apollo-server/security/authentication/
         secret: process.env.SECRET,
         loaders: {
-          user: new DataLoader(keys => batchUsers(keys, models)),
+          user: userLoader,
         },
       };
   },
