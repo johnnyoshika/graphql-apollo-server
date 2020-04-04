@@ -6,11 +6,13 @@ import {
   ApolloServer,
   AuthenticationError,
 } from 'apollo-server-express';
+import DataLoader from 'dataloader';
 import jwt from 'jsonwebtoken';
 
 import schema from './schema';
 import resolvers from './resolvers';
 import models, { sequelize } from './models';
+import loaders from './loaders';
 
 const getMe = async req => {
   const token = req.headers['x-token'];
@@ -35,7 +37,15 @@ const server = new ApolloServer({
   }),
   context: async ({ req, connection }) => {
     // subscription websocket request
-    if (connection) return { models };
+    if (connection)
+      return {
+        models,
+        loaders: {
+          user: new DataLoader(keys =>
+            loaders.user.batchUsers(keys, models),
+          ),
+        },
+      };
 
     // http request
     if (req)
@@ -43,6 +53,11 @@ const server = new ApolloServer({
         models,
         me: await getMe(req), // The context is generated  with every new request, so we don’t have to clean up. Source: https://www.apollographql.com/docs/apollo-server/security/authentication/
         secret: process.env.SECRET,
+        loaders: {
+          user: new DataLoader(keys =>
+            loaders.user.batchUsers(keys, models),
+          ),
+        },
       };
   },
 });
