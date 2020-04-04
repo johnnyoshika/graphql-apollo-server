@@ -28,6 +28,8 @@ const app = express();
 app.use(cors());
 
 const server = new ApolloServer({
+  introspection: true, // enable for Heroku
+  playground: true, // enable in Heroku
   typeDefs: schema,
   resolvers,
   formatError: error => ({
@@ -68,6 +70,7 @@ const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 const eraseDatabaseOnSync = true;
+const port = process.env.PORT || 8000; // Heoku sets process.env.PORT
 
 sequelize
   .sync({
@@ -76,8 +79,10 @@ sequelize
   .then(async () => {
     if (eraseDatabaseOnSync) createUsersWithMessages(new Date());
 
-    httpServer.listen({ port: 8000 }, () => {
-      console.log('Apollo Server on http://localhost:8000/graphql');
+    httpServer.listen({ port }, () => {
+      console.log(
+        `Apollo Server on http://localhost:${port}/graphql`,
+      );
     });
   });
 
