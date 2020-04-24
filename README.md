@@ -49,14 +49,56 @@ _Note: Debugging works best after installing and running a long running task, su
 ![image](https://user-images.githubusercontent.com/504505/77853652-0c17a580-719a-11ea-88f1-4fc02ddd568c.png)
   * Set a breakpoint and it should now be hit
 
-  ## Deployment
-  * Install Heroku CLI: https://devcenter.heroku.com/articles/heroku-cli
-  * Log in to Heroku: `heroku login`
-  * Create Heroku application: `heroku create {unique name}` (e.g. `heroku create graphql-apollo-server11`)
-  * Install PostgreSQL: `heroku addons:create heroku-postgresql:hobby-dev`
-  * Prevent Heroku from pruning dev dependencies, because we need them, such as nodemon: `heroku config:set NPM_CONFIG_PRODUCTION=false YARN_PRODUCTION=false`
-  * Deploy: `git push heroku master`
-  * Open website: `heroku open`
-    * ...then append `/graphql`
+## Deployment
+* Install Heroku CLI: https://devcenter.heroku.com/articles/heroku-cli
+* Log in to Heroku: `heroku login`
+* Create Heroku application: `heroku create {unique name}` (e.g. `heroku create graphql-apollo-server11`)
+* Install PostgreSQL: `heroku addons:create heroku-postgresql:hobby-dev`
+* Prevent Heroku from pruning dev dependencies, because we need them, such as nodemon: `heroku config:set NPM_CONFIG_PRODUCTION=false YARN_PRODUCTION=false`
+* Deploy: `git push heroku master`
 
-  _Note: May want to set `eraseDatabaseOnSync` to `false` after the first deployment so that the database isn't overwritten by re-seeding._
+_Note: May want to set `eraseDatabaseOnSync` to `false` after the first deployment so that the database isn't overwritten by re-seeding._
+
+### Test Deployed App
+* Open website: `heroku open`
+  * ...then append `/graphql`
+* Sign in:
+  ```
+  mutation {
+    signIn(login:"louferigno", password:"1Password") {
+      token
+    }
+  }
+  ```
+* Copy the token and add this to header:
+  ```
+  {
+    "x-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJsb3VAZW1haWwuY29tIiwidXNlcm5hbWUiOiJsb3VmZXJpZ25vIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNTg3NzcxMjQzLCJleHAiOjE1ODc3NzMwNDN9.8yL7p4roB9QtuKeF3kFfzNsKngk4lKywZjkiVUXkMks"
+  }
+  ```
+* Open 2 browser tabs.
+  * Tab 1:
+    ```
+    subscription {
+      messageCreated {
+        message {
+          id
+          text
+          createdAt
+          user {
+            username
+          }
+        }
+      }
+    }
+    ```
+  * Tab 2:
+    ```
+    mutation {
+      createMessage(text:"What are you doing today?") {
+        text
+        createdAt
+      }
+    }
+    ```
+  * _Note: The free tier at Heroku times out quickly, so the subscription won't remain connected for long._
